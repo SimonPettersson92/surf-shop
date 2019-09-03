@@ -19,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/surf-shop', {useNewUrlParser: true})
 
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, 'connection error!'));
-db.once('open', function() {
+db.once('open', () => {
 	console.log('we\'re connected!');
 });
 
@@ -39,6 +39,9 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.use(User.createStrategy());
  
