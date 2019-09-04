@@ -1,12 +1,15 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
+const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const User = require('./models/user');
 const session = require('express-session');
 const mongoose = require('mongoose');
+const methodOverride = require('method-override');
 
 // require routes
 const indexRouter = require('./routes/index');
@@ -28,10 +31,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 
 // Configure Passport and Sessions
 app.use(session({
