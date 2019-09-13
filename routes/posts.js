@@ -9,7 +9,8 @@ const {
  	postCreate,
  	postShow,
  	postEdit,
- 	postUpdate
+ 	postUpdate,
+ 	postDestroy
  } = require('../controllers/posts');
 
 /* GET posts index /posts */
@@ -31,7 +32,7 @@ router.get('/:id/edit', asyncErrorHandler(postEdit));
 router.put('/:id', upload.array('images', 4), asyncErrorHandler(postUpdate));
 
 /* DELETE posts destroy /posts/:id */
-router.delete('/:id', asyncErrorHandler(postUpdate));
+router.delete('/:id', asyncErrorHandler(postDestroy));
 
 
 
