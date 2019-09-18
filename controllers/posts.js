@@ -11,7 +11,11 @@ cloudinary.config({
 module.exports = {
 	// Posts Index
 	async postIndex(req, res, next) {
-		let posts = await Post.find({});
+		let posts = await Post.paginate({}, {
+			page: req.query.page || 1,
+			limit: 10
+		});
+		posts.page = Number(posts.page);
 		res.render('posts/index', {posts, title: 'Posts index' });
 	},
 
@@ -45,8 +49,17 @@ module.exports = {
 
 	// Posts Show
 	async postShow(req, res, next) {
-		let post = await Post.findById(req.params.id);
-		res.render('posts/show', { post });
+		let post = await Post.findById(req.params.id).populate( {
+			path: 'reviews',
+			options: { sort: { "_id": -1 } },
+			populate: {
+				path: 'author',
+				model: 'User'
+			}
+		});
+		const floorRating = post.calculateAvgRating();
+		let mapBoxToken = process.env.MAPBOX_TOKEN;
+		res.render('posts/show', { post, mapBoxToken, floorRating });
 	},
 
 	// Posts Edit
@@ -118,6 +131,8 @@ module.exports = {
 			await cloudinary.v2.uploader.destroy(image.public_id);
 		}
 		await post.remove();
+		req.session.success = "Post deleted successfully!";
 		res.redirect('/posts');
 	}
 }
+// https://raw.githubusercontent.com/LunarLogic/starability/master/starability-minified/starability-basic.min.css

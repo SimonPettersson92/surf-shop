@@ -13,6 +13,8 @@ const User = require('./models/user');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
+//const seedPosts = require('./seeds');
+//seedPosts();
 
 // require routes
 const indexRouter = require('./routes/index');
@@ -21,7 +23,7 @@ const reviewsRouter = require('./routes/reviews');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/surf-shop-mapbox', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/surf-shop', {useNewUrlParser: true});
 
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, 'connection error!'));
@@ -61,6 +63,13 @@ passport.deserializeUser(User.deserializeUser());
 
 // set local variables middleware
 app.use(function(req, res, next) {
+  req.user = {
+      //'_id' : '5d7df27bde7f4b2530fdcda0',
+      //'_id' : '5d7e3fdc165c7a4110099d49',
+      '_id' : '5d82087c8742703d4c4c9014',
+      'username' : 'simon'
+  };
+  res.locals.currentUser = req.user;
   // set default page title
   res.locals.title = 'Surf Shop';
   // set success flash message
