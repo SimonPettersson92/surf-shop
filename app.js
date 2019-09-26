@@ -39,6 +39,7 @@ app.set('view engine', 'ejs');
 // set public assets directory
 app.set(express.static('public'));
 
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,12 +64,13 @@ passport.deserializeUser(User.deserializeUser());
 
 // set local variables middleware
 app.use(function(req, res, next) {
-  req.user = {
+/*  req.user = {
       //'_id' : '5d7df27bde7f4b2530fdcda0',
       //'_id' : '5d7e3fdc165c7a4110099d49',
       '_id' : '5d82087c8742703d4c4c9014',
       'username' : 'simon'
   };
+  */
   res.locals.currentUser = req.user;
   // set default page title
   res.locals.title = 'Surf Shop';

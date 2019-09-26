@@ -2,13 +2,7 @@ const Post = require('../models/post');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapBoxToken });
-const cloudinary = require('cloudinary');
-cloudinary.config({
-	cloud_name: 'db7hg6sqy',
-	api_key: '494111649192158',
-	api_secret: process.env.CLOUDINARY_SECRET
-});
-
+const { cloudinary } = require('../cloudinary');
 
 module.exports = {
 	// Posts Index
@@ -31,10 +25,9 @@ module.exports = {
 	async postCreate(req, res, next) {
 		req.body.post.images = [];
 		for(const file of req.files) {
-			let image = await cloudinary.v2.uploader.upload(file.path);
 			req.body.post.images.push({
-				url: image.secure_url,
-				public_id: image.public_id
+				url: file.secure_url,
+				public_id: file.public_id
 			});
 		}
 		let response = await geocodingClient
@@ -43,7 +36,7 @@ module.exports = {
 	  		limit: 1
 		})
 		.send();
-			console.log(response);
+		console.log(response);
 		req.body.post.geometry = response.body.features[0].geometry;
 		let post = new Post(req.body.post);
 		post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
@@ -98,11 +91,9 @@ module.exports = {
 		if (req.files) {
 			//	upload images
 			for(const file of req.files) {
-				let image = await cloudinary.v2.uploader.upload(file.path);
-				//	add images to post.images array
 				post.images.push({
-					url: image.secure_url,
-					public_id: image.public_id
+					url: file.secure_url,
+					public_id: file.public_id
 				});
 			}
 		}
